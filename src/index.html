@@ -1,0 +1,36 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script src="/eventsource.js"></script>
+    <script>
+        const eventSource = new EventSource("events");
+        
+        function handleEvent(event) {
+            const divEl = document.createElement('div');
+            const { type } = event;
+            
+            if(type === 'message') {
+                divEl.innerText = `${type}: ${event.data}`;
+            } else if(type === 'error') {
+                if(event.eventPhase === EventSource.CLOSED) {
+                    eventSource.close();
+                    divEl.innerText = `EventSource Closed.`;
+                } else {
+                    divEl.innerText = `${type}: ${eventSource.url}`;
+                }
+            }
+
+            document.body.appendChild(divEl);
+        }
+
+        eventSource.addEventListener('open', handleEvent);
+        eventSource.addEventListener('message', handleEvent);
+        eventSource.addEventListener('error', handleEvent);
+    </script>
+</body>
+</html>
